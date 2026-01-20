@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>CRUD API</title>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div>
+  <h2>Blogging platform</h2>
+
+  <h3>Create blog</h3>
+  <input id="title" placeholder="Title">
+  <textarea id="body" placeholder="Content"></textarea>
+  <input id="author" placeholder="Author">
+  <button onclick="create()">Create</button>
+
+  <h3>View all blogs</h3>
+  <button onclick="viewAll()">View</button>
+
+  <h3>View blog by ID</h3>
+  <input id="viewid" placeholder="Blog ID">
+  <button onclick="viewById()">View</button>
+
+  <h3>Update blog</h3>
+  <input id="updateid" placeholder="ID">
+  <input id="newtitle" placeholder="New title">
+  <textarea id="newbody" placeholder="New content"></textarea>
+  <button onclick="update()">Update</button>
+
+  <h3>Delete blog</h3>
+  <input id="deleteid" required>
+  <button onclick="deleteBlog()">Delete</button>
+
+  <div id="post"></div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
+
