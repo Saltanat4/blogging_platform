@@ -133,22 +133,28 @@ async function searchBlog() {
     if (!q) return viewAll(); 
 
     try {
-        const res = await fetch("/blogs/search?q=" + q);
+        const res = await fetch("/blogs/search?q=" + encodeURIComponent(q));
         const data = await res.json();
+        
         const div = document.getElementById("post");
-        
         div.innerHTML = `<h2>Search results for: "${q}"</h2>`;
-        if (data.length === 0) div.innerHTML += "<p>No posts found.</p>";
-        
+
+        if (data.length === 0) {
+            div.innerHTML += "<p>No results found. Try another word.</p>";
+            return;
+        }
+
         data.forEach(p => {
             div.innerHTML += `
                 <div class="post-card">
                     <h3>${p.title}</h3>
-                    <p>${p.body}</p>
+                    <p>${p.body.substring(0, 100)}...</p>
                     <div class="actions">
-                        <button onclick="window.location.href='/post?id=${p._id}'">View</button>
+                        <button onclick="window.location.href='/post?id=${p._id}'">Read More</button>
                     </div>
                 </div>`;
         });
-    } catch (e) { console.log(e); }
+    } catch (e) {
+        console.error("Search error:", e);
+    }
 }

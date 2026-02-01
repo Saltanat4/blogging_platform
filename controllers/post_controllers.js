@@ -67,7 +67,9 @@ exports.addComment = async (req, res) => {
 exports.searchPosts = async (req, res) => {
     try {
         const query = req.query.q;
-        const posts = await Post.find({ $text: { $search: query } });
+        const posts = await Post.find({ 
+            title: { $regex: query, $options: "i" } 
+        });
         res.json(posts);
     } catch (err) {
         res.status(500).json({ error: err.message });

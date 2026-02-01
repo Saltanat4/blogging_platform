@@ -13,9 +13,5 @@ const postSchema = mongoose.Schema({
     tags: [String]
 }, { timestamps: true });
 
-
-postSchema.index({ title: "text" }); 
-postSchema.index({ tags: 1 }); 
-
 const Post = mongoose.model("Posts", postSchema);
 module.exports = Post; 
