@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Database Analytics</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <nav>
+        <a href="/">Home</a> | <a href="/create">Create</a> | <a href="/analytics">Analytics</a>
+    </nav>
+    <div id="main">
+        <h2>Tag Cloud Statistics</h2>
+        <p>This data is fetched using <b>MongoDB Aggregation Framework ($unwind & $group)</b>.</p>
+        <button onclick="viewStats()">Refresh Analytics</button>
+        <div id="statsContainer" style="margin-top: 20px;">
+            </div>
+    </div>
+    <script src="/script.js"></script>
+    <script>window.onload = viewStats;</script>
+</body>
+</html>

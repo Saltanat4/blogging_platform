@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Post Details</title>
+    <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+    <nav>
+        <a href="/">Home</a> | <a href="/create">Create</a> | <a href="/analytics">Analytics</a>
+    </nav>
+    <div id="main">
+        <div id="postDetail">Loading details...</div>
+        
+        <div class="comment-section">
+            <hr>
+            <h3>Leave a Comment</h3>
+            <input id="commentUser" placeholder="Your Name">
+            <textarea id="commentText" placeholder="Your Comment"></textarea>
+            <button onclick="addComment()">Post Comment</button>
+        </div>
+    </div>
+    <script src="/script.js"></script>
+    <script>
+        window.onload = () => {
+            const id = new URLSearchParams(window.location.search).get('id');
+            if (id) viewByID(id);
+        };
+    </script>
+</body>
+</html>

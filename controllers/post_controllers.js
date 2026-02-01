@@ -1,68 +1,75 @@
-const Post=require("../models/post_model.js");
+const Post = require("../models/post_model.js");
 
-const getPosts= async(req, res)=>{
-    try{
-        const posts= await Post.find();
-        res.status(200).json(posts);
-    }catch(err){
-        res.status(500).json({message:err.message});
-    }
-}
+exports.getPosts = async (req, res) => {
+    try {
+        const posts = await Post.find().sort({ createdAt: -1 });
+        res.json(posts);
+    } catch (err) { res.status(500).json({ error: err.message }); }
+};
 
-const getPost=async(req, res)=>{
-    try{
-        const id=req.params.id;
-        const post=await Post.findById(id);
+exports.getPost = async (req, res) => {
+    try {
+        const post = await Post.findById(req.params.id);
+        res.json(post);
+    } catch (err) { res.status(404).json({ error: "Post not found" }); }
+};
 
-        if(!post){
-            return res.status(404).json({message:"Post not found"});
-        }
-        res.status(200).json(post);
-    }
-    catch(err){
-        res.status(500).json({message:err.message});
-    }
-}
+exports.createPost = async (req, res) => {
+    try {
+        const newPost = await Post.create(req.body);
+        res.status(201).json(newPost);
+    } catch (err) { res.status(400).json({ error: err.message }); }
+};
 
-const createPost=async(req, res)=>{
-    try{
-        const{title, body, author}=req.body;
-        const post= await Post.create({title, body, author});
-        res.status(201).json(post);
-    }catch(err){
-        res.status(500).json({message:err.message});
-    }
-}
+exports.updatePost = async (req, res) => {
+    try {
+        const updated = await Post.findByIdAndUpdate(req.params.id, req.body, { new: true });
+        res.json(updated);
+    } catch (err) { res.status(400).json({ error: err.message }); }
+};
 
-const updatePost=async(req, res)=>{
-    try{
-        const id=req.params.id;
-        const post=await Post.findByIdAndUpdate(id, req.body);
-        if(!post){
-            return res.status(404).json({message:"Post not found"});
-        }
-        const updated_post=await Post.findById(id);
-        
-        res.status(200).json(updated_post);
+exports.deletePost = async (req, res) => {
+    try {
+        await Post.findByIdAndDelete(req.params.id);
+        res.json({ message: "Deleted" });
+    } catch (err) { res.status(500).json({ error: err.message }); }
+};
 
-    }
-    catch(err){
-        res.status(500).json({message:err.message});
-    }
-}
+exports.getTagStats = async (req, res) => {
+    try {
+        const stats = await Post.aggregate([
+            { $unwind: "$tags" },
+            { $group: { _id: "$tags", count: { $sum: 1 } } },
+            { $sort: { count: -1 } }
+        ]);
+        res.json(stats);
+    } catch (err) { res.status(500).json({ error: err.message }); }
+};
 
-const deletePost=async(req, res)=>{
-    try{
-        const id=req.params.id;
-        const post=await Post.findByIdAndDelete(id);
-        if(!post){
-            return res.status(404).json({message:"Post not found"});
-        }
-        res.status(200).json({message:"Post deleted"});
-    }
-    catch(err){
-        return res.status(500).json({message:err.message});
-    }
-}
+exports.likePost = async (req, res) => {
+    try {
+        const post = await Post.findByIdAndUpdate(req.params.id, { $inc: { likes: 1 } }, { new: true });
+        res.json(post);
+    } catch (err) { res.status(500).json({ error: err.message }); }
+};
 
-module.exports={getPosts, getPost, createPost, updatePost, deletePost};
+exports.addComment = async (req, res) => {
+    try {
+        const post = await Post.findByIdAndUpdate(
+            req.params.id,
+            { $push: { comments: { user: req.body.user, text: req.body.text } } },
+            { new: true }
+        );
+        res.json(post);
+    } catch (err) { res.status(500).json({ error: err.message }); }
+};
+
+exports.searchPosts = async (req, res) => {
+    try {
+        const query = req.query.q;
+        const posts = await Post.find({ $text: { $search: query } });
+        res.json(posts);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+};

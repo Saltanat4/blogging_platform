@@ -1,12 +1,14 @@
-const express=require("express");
-const router=express.Router();
-const {getPosts, getPost, createPost, updatePost, deletePost}=require("../controllers/post_controllers.js");
+const express = require("express");
+const router = express.Router();
+const ctrl = require("../controllers/post_controllers");
 
+router.get("/", ctrl.getPosts);
+router.get("/stats", ctrl.getTagStats);
+router.post("/", ctrl.createPost);
+router.get("/:id", ctrl.getPost);
+router.put("/:id", ctrl.updatePost);      
+router.delete("/:id", ctrl.deletePost);   
+router.patch("/:id/like", ctrl.likePost);
+router.post("/:id/comment", ctrl.addComment);
 
-router.get("/", getPosts);
-router.get("/:id", getPost);
-router.post("/", createPost);
-router.put("/:id", updatePost);
-router.delete("/:id", deletePost);
-
-module.exports=router;
+module.exports = router;

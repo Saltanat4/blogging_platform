@@ -1,100 +1,154 @@
-async function createBlog() {
-  const title = document.querySelector("input[name='title']").value;
-  const body = document.querySelector("textarea[name='body']").value;
-  const author = document.querySelector("input[name='author']").value;
-
-  const response = await fetch("/blogs", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ title, body, author })
-  });
-
-  const blog = await response.json();
-
-  document.getElementById("post").innerHTML = `
-    <div>
-      <h4>Created post</h4>
-      <p>Title: ${blog.title}</p>
-      <p>Body: ${blog.body}</p>
-      <p>Author: ${blog.author}</p>
-      <p>ID: ${blog._id}</p>
-    </div>
-  `;
-}
-
 async function viewAll() {
-  const response = await fetch("/blogs");
-  const blogs = await response.json();
+    try {
+        const res = await fetch("/blogs");
+        const data = await res.json();
+        const div = document.getElementById("post");
+        if (!div) return;
 
-  const container = document.getElementById("post");
-  container.innerHTML = "<h4>All posts</h4>";
-
-  blogs.forEach(blog => {
-    container.innerHTML += `
-      <div>
-        <p><b>${blog.title}</b></p>
-        <p>${blog.body}</p>
-        <p>${blog.author}</p>
-        <p>ID: ${blog._id}</p>
-      </div>
-    `;
-  });
+        div.innerHTML = "<h2>Recent Posts</h2>";
+        data.forEach(p => {
+            div.innerHTML += `
+                <div class="post-card">
+                    <h3>${p.title}</h3>
+                    <p>${p.body.substring(0, 150)}...</p>
+                    <div class="meta">👤 ${p.author} | ❤️ ${p.likes} | 💬 ${p.comments ? p.comments.length : 0}</div>
+                    <div class="actions">
+                        <button onclick="window.location.href='/post?id=${p._id}'">View & Comments</button>
+                        <button class="btn-edit" onclick="editPost('${p._id}')">Edit</button>
+                        <button class="btn-delete" onclick="deletePost('${p._id}')">Delete</button>
+                        <button style="background:none; color:var(--accent); border:1px solid var(--accent)" onclick="likePost('${p._id}')">❤️ Like</button>
+                    </div>
+                </div>`;
+        });
+    } catch (e) { console.log("Error loading posts:", e); }
 }
 
-async function viewByID() {
-  const id = document.getElementById("viewid").value;
-
-  const response = await fetch(`/blogs/${id}`);
-  const blog = await response.json();
-
-  document.getElementById("post").innerHTML = `
-    <div>
-      <h4>Post by ID</h4>
-      <p>Title: ${blog.title}</p>
-      <p>Body: ${blog.body}</p>
-      <p>Author: ${blog.author}</p>
-      <p>ID: ${blog._id}</p>
-    </div>
-  `;
+async function viewByID(id) {
+    try {
+        const res = await fetch("/blogs/" + id);
+        const p = await res.json();
+        const div = document.getElementById("postDetail");
+        
+        div.innerHTML = `
+            <div class="post-card" style="transform:none; box-shadow:none">
+                <h1>${p.title}</h1>
+                <p style="font-size:1.1rem; margin:20px 0">${p.body}</p>
+                <div class="meta">👤 ${p.author} | 🏷️ ${p.tags.join(', ')}</div>
+            </div>
+            <h3>Comments (${p.comments.length})</h3>
+            <div id="commentsList">
+                ${p.comments.map(c => `
+                    <div style="background:#f1f5f9; padding:10px; border-radius:8px; margin-bottom:10px">
+                        <strong>${c.user}:</strong> ${c.text}
+                    </div>
+                `).join('')}
+            </div>`;
+    } catch (e) { console.log("Error loading post details:", e); }
 }
 
-async function update() {
-  const id = document.getElementById("updateid").value;
-  const title = document.querySelector("input[placeholder='New title']").value;
-  const body = document.querySelector("textarea[placeholder='New content']").value;
+async function addComment() {
+    const id = new URLSearchParams(window.location.search).get('id');
+    const user = document.getElementById("commentUser").value;
+    const text = document.getElementById("commentText").value;
 
-  const response = await fetch(`/blogs/${id}`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ title, body })
-  });
+    if (!user || !text) return alert("Please fill fields");
 
-  const blog = await response.json();
-
-  document.getElementById("post").innerHTML = `
-    <div>
-      <h4>Updated post</h4>
-      <p>Title: ${blog.title}</p>
-      <p>Body: ${blog.body}</p>
-      <p>Author: ${blog.author}</p>
-      <p>ID: ${blog._id}</p>
-    </div>
-  `;
+    try {
+        await fetch(`/blogs/${id}/comment`, {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({ user, text })
+        });
+        location.reload();
+    } catch (e) { alert("Error adding comment"); }
 }
 
-async function deleteBlog() {
-  const id = document.getElementById("deleteid").value;
+async function likePost(id) {
+    try {
+        await fetch(`/blogs/${id}/like`, { method: "PATCH" });
+        viewAll();
+    } catch (e) { console.log(e); }
+}
 
-  const response = await fetch(`/blogs/${id}`, {
-    method: "DELETE"
-  });
+async function deletePost(id) {
+    if (confirm("Delete this story?")) {
+        try {
+            await fetch("/blogs/" + id, { method: "DELETE" });
+            viewAll();
+        } catch (e) { alert("Delete failed"); }
+    }
+}
 
-  const result = await response.json();
+async function editPost(id) {
+    const t = prompt("New Title:");
+    const b = prompt("New Body:");
+    if (t && b) {
+        try {
+            await fetch("/blogs/" + id, {
+                method: "PUT",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({ title: t, body: b })
+            });
+            viewAll();
+        } catch (e) { alert("Update failed"); }
+    }
+}
 
-  document.getElementById("post").innerHTML = `
-    <div>
-      <h4>${result.message}</h4>
-      <p>ID:${id}</p>
-    </div>
-  `;
+async function createBlog() {
+    const title = document.getElementById("title").value;
+    const body = document.getElementById("body").value;
+    const author = document.getElementById("author").value;
+    const tags = document.getElementById("tag").value.split(",").map(t => t.trim());
+
+    try {
+        await fetch("/blogs", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({ title, body, author, tags })
+        });
+        window.location.href = "/";
+    } catch (e) { alert("Create failed"); }
+}
+
+async function viewStats() {
+    try {
+        const res = await fetch("/blogs/stats");
+        const stats = await res.json();
+        const container = document.getElementById("statsContainer");
+        if (!container) return;
+
+        container.innerHTML = "<h3>Tag Distribution</h3>";
+        stats.forEach(s => {
+            container.innerHTML += `
+                <div class="stat-item">
+                    <span>#${s._id}</span>
+                    <span>${s.count} posts</span>
+                </div>`;
+        });
+    } catch (e) { console.log("Error stats:", e); }
+}
+
+async function searchBlog() {
+    const q = document.getElementById("searchInput").value;
+    if (!q) return viewAll(); 
+
+    try {
+        const res = await fetch("/blogs/search?q=" + q);
+        const data = await res.json();
+        const div = document.getElementById("post");
+        
+        div.innerHTML = `<h2>Search results for: "${q}"</h2>`;
+        if (data.length === 0) div.innerHTML += "<p>No posts found.</p>";
+        
+        data.forEach(p => {
+            div.innerHTML += `
+                <div class="post-card">
+                    <h3>${p.title}</h3>
+                    <p>${p.body}</p>
+                    <div class="actions">
+                        <button onclick="window.location.href='/post?id=${p._id}'">View</button>
+                    </div>
+                </div>`;
+        });
+    } catch (e) { console.log(e); }
 }
