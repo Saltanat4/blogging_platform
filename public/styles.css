@@ -1,12 +1,11 @@
-/* Переменные для легкого управления цветом */
 :root {
-    --navy-deep: #0f172a;       /* Глубокий полночно-синий */
-    --navy-light: #1e293b;      /* Облегченный синий */
-    --accent: #38bdf8;          /* Небесно-голубой акцент */
-    --bg-soft: #f8fafc;         /* Мягкий фон */
-    --card-white: #ffffff;      /* Белый для карточек */
-    --text-main: #334155;       /* Основной текст */
-    --text-light: #94a3b8;      /* Приглушенный текст */
+    --navy-deep: #0f172a;       
+    --navy-light: #1e293b;      
+    --accent: #38bdf8;         
+    --bg-soft: #f8fafc;       
+    --card-white: #ffffff;    
+    --text-main: #334155;      
+    --text-light: #94a3b8;    
 }
 
 * {
@@ -22,7 +21,7 @@ body {
     line-height: 1.6;
 }
 
-/* Навигация */
+
 nav {
     background-color: var(--navy-deep);
     padding: 20px 0;
@@ -48,7 +47,7 @@ nav a:hover {
     color: var(--accent);
 }
 
-/* Контейнер */
+
 #main {
     max-width: 800px;
     margin: 40px auto;
@@ -75,7 +74,7 @@ h2::before {
     border-radius: 2px;
 }
 
-/* Карточки постов */
+
 .post-card {
     background: var(--card-white);
     border-radius: 12px;
@@ -111,7 +110,7 @@ h2::before {
     font-weight: 500;
 }
 
-/* Кнопки */
+
 .actions {
     margin-top: 20px;
     display: flex;
@@ -141,7 +140,7 @@ button:hover {
 .btn-delete { background-color: #ef4444; }
 .btn-delete:hover { background-color: #dc2626; }
 
-/* Формы */
+
 input, textarea {
     width: 100%;
     padding: 14px;
@@ -159,7 +158,7 @@ input:focus, textarea:focus {
     box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.1);
 }
 
-/* Аналитика */
+
 .stat-item {
     background: var(--navy-deep);
     color: white;

@@ -1,3 +1,38 @@
+async function registerUser() {
+    const username = document.getElementById("regUser").value;
+    const password = document.getElementById("regPass").value;
+
+    try {
+        const res = await fetch("/auth/register", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ username, password })
+        });
+        if (res.ok) {
+            alert("Registration successful! Please login.");
+            window.location.href = "/login";
+        } else {
+            alert("User already exists or error occurred");
+        }
+    } catch (e) { console.error(e); }
+}
+
+async function loginUser() {
+    const username = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
+    const res = await fetch("/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password })
+    });
+    const data = await res.json();
+    if (res.ok) {
+        localStorage.setItem("user", JSON.stringify(data));
+        window.location.href = "/";
+    } else alert(data.error);
+}
+
+
 async function viewAll() {
     try {
         const res = await fetch("/blogs");
