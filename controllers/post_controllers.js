@@ -16,6 +16,9 @@ exports.getPost = async (req, res) => {
 
 exports.createPost = async (req, res) => {
     try {
+        if (!req.body.author) {
+            return res.status(401).json({ error: "Unauthorized: Please login to post" });
+        }
         const newPost = await Post.create(req.body);
         res.status(201).json(newPost);
     } catch (err) { res.status(400).json({ error: err.message }); }
@@ -75,6 +78,7 @@ exports.searchPosts = async (req, res) => {
         res.status(500).json({ error: err.message });
     }
 };
+
 exports.getUserPosts = async (req, res) => {
     try {
         const posts = await Post.find({ author: req.params.userId });
