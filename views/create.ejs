@@ -6,15 +6,16 @@
 </head>
 <body>
     <nav>
-        <a href="/">Home</a> | <a href="/create">Create</a> | <a href="/analytics">Analytics</a>
-    </nav>
+        <a href="/">Home</a>
+<a href="/create">Create Post</a>
+<a href="/my-posts">My Posts</a> <a href="/stats">Analytics</a>
+    </nav> 
     <div id="main">
-        <h2>Create a New Story</h2>
-        <input id="title" placeholder="Title" required>
-        <textarea id="body" placeholder="Write your content here..." required></textarea>
-        <input id="author" placeholder="Author Name">
-        <input id="tag" placeholder="Tags (e.g. tech, lifestyle, news)">
-        <button onclick="createBlog()">Publish Post</button>
+       <h2>Create a New Story</h2>
+<input id="title" placeholder="Title" required>
+<textarea id="body" placeholder="Write your content here..." required></textarea>
+<input id="tag" placeholder="Tags (e.g. tech, lifestyle)">
+<button onclick="createBlog()">Publish Post</button>
     </div>
     <script src="/script.js"></script>
 </body>

@@ -5,9 +5,16 @@
     <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
-    <nav>
-        <a href="/">Home</a> | <a href="/create">Create</a> | <a href="/analytics">Analytics</a> | <a href="/register">Register</a>
-    </nav>
+    <nav id="nav-menu">
+    <a href="/">Home</a>
+    <span id="auth-links" style="display:none;">
+        | <a href="/create">Create</a> 
+        | <a href="/my-posts">My Posts</a>
+    </span>
+    | <a href="/analytics">Analytics</a>
+    | <a id="login-link" href="/login">Login</a>
+    <a id="logout-link" href="#" onclick="logout()" style="display:none;">Logout</a>
+</nav>
     <div id="main">
         <div id="search">
             <input id="searchInput" placeholder="Search by title...">
@@ -18,5 +25,18 @@
     </div>
     <script src="/script.js"></script>
     <script>window.onload = viewAll;</script>
+    <script>
+    // Скрипт для управления меню
+    if (localStorage.getItem("userId")) {
+        document.getElementById("auth-links").style.display = "inline";
+        document.getElementById("login-link").style.display = "none";
+        document.getElementById("logout-link").style.display = "inline";
+    }
+
+    function logout() {
+        localStorage.clear();
+        location.href = '/';
+    }
+</script>
 </body>
 </html>

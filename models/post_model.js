@@ -1,27 +1,18 @@
+
 const mongoose = require('mongoose');
 
-const postSchema = mongoose.Schema({
-    title: { 
-        type: String, 
-        required: true },
-    body: { 
-        type: String, 
-        required: true },
-    author: {  
+const postSchema = new mongoose.Schema({
+    title: { type: String, required: true },
+    body: { type: String, required: true },
+    // Поле author должно быть ссылкой на коллекцию Users
+    author: { 
         type: mongoose.Schema.Types.ObjectId, 
         ref: 'User', 
-        required: true  },
-    likes: { 
-        type: Number,
-        default: 0 },
-    comments: [{
-        user: String,
-        text: String,
-        createdAt: { type: Date, default: Date.now }
-    }],
-    tags: [String]
-}, { timestamps: true });
+        required: true 
+    },
+    tags: [String],
+    likes: { type: Number, default: 0 },
+    comments: [{ user: String, text: String }]
+});
 
-postSchema.index({ title: 'text', tags: 1 });
-const Post = mongoose.model("Posts", postSchema);
-module.exports = Post; 
+module.exports = mongoose.model('Post', postSchema);
