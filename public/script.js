@@ -146,3 +146,11 @@ async function searchBlogs() {
         `).join('');
     } catch (e) { console.error(e); }
 }
+
+async function viewStats() {
+  const res = await fetch("/blogs/stats");
+  const data = await res.json();
+
+  document.getElementById("statsContainer").innerHTML =
+    data.map(t => `<p>#${t._id}: ${t.count}</p>`).join("");
+}

@@ -18,15 +18,13 @@
     <div id="main">
         <div id="search">
             <input id="searchInput" placeholder="Search by title...">
-            <button onclick="searchBlog()">Search</button>
-        </div> 
+<button onclick="searchBlogs()">Search</button>        </div> 
         <div id="post">
             </div>
     </div>
     <script src="/script.js"></script>
     <script>window.onload = viewAll;</script>
     <script>
-    // Скрипт для управления меню
     if (localStorage.getItem("userId")) {
         document.getElementById("auth-links").style.display = "inline";
         document.getElementById("login-link").style.display = "none";

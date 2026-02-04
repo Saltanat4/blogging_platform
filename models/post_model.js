@@ -1,18 +1,32 @@
-
 const mongoose = require('mongoose');
 
-const postSchema = new mongoose.Schema({
+const commentSchema = new mongoose.Schema({
+  user: { type: String, required: true }, // username
+  text: { type: String, required: true },
+  createdAt: { type: Date, default: Date.now }
+});
+
+const postSchema = new mongoose.Schema(
+  {
     title: { type: String, required: true },
     body: { type: String, required: true },
-    // Поле author должно быть ссылкой на коллекцию Users
-    author: { 
-        type: mongoose.Schema.Types.ObjectId, 
-        ref: 'User', 
-        required: true 
+
+    author: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true
     },
+
     tags: [String],
     likes: { type: Number, default: 0 },
-    comments: [{ user: String, text: String }]
-});
+
+    likedBy: [
+      { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
+    ],
+
+    comments: [commentSchema]
+  },
+  { timestamps: true }
+);
 
 module.exports = mongoose.model('Post', postSchema);
