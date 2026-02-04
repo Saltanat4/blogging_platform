@@ -4,7 +4,6 @@ const ctrl = require("../controllers/post_controllers");
 router.get("/search", ctrl.searchPosts);
 router.get("/stats", ctrl.getTagStats);
 router.get("/user/:userId", ctrl.getUserPosts);
-
 router.get("/", ctrl.getPosts);
 router.get("/:id", ctrl.getPost);
 
